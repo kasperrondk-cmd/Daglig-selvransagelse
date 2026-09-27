@@ -1,695 +1,76 @@
 <!DOCTYPE html>
 <html lang="da">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daglig selvransagelse TEST</title>
 
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Selvransagelse">
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f1eb;
+  margin: 0;
+  padding: 20px;
+}
 
-  <title>Daglig selvransagelse</title>
+.card {
+  max-width: 600px;
+  margin: auto;
+  background: white;
+  padding: 25px;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+h1 {
+  text-align: center;
+}
 
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f5f1ea;
-      color: #292621;
-    }
+button {
+  width: 100%;
+  padding: 16px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 12px;
+  background: #333;
+  color: white;
+  font-size: 17px;
+}
 
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px 16px 40px;
-    }
-
-    h1 {
-      text-align: center;
-      margin: 10px 0 8px;
-      font-size: 30px;
-    }
-
-    .intro {
-      text-align: center;
-      color: #6d665d;
-      margin-bottom: 22px;
-      line-height: 1.5;
-    }
-
-    .card {
-      background: white;
-      border-radius: 18px;
-      padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.06);
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 10px;
-      line-height: 1.4;
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 110px;
-      border: 1px solid #ddd5ca;
-      border-radius: 12px;
-      padding: 13px;
-      font-size: 16px;
-      font-family: inherit;
-      resize: vertical;
-      background: #fcfaf7;
-    }
-
-    textarea:focus {
-      outline: none;
-      border-color: #8c7b68;
-    }
-
-    button {
-      width: 100%;
-      border: none;
-      border-radius: 13px;
-      padding: 15px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .save-button {
-      background: #292621;
-      color: white;
-      margin-top: 4px;
-    }
-
-    .notification-button {
-      background: #e9e0d5;
-      color: #292621;
-    }
-
-    .message {
-      text-align: center;
-      margin: 14px 0;
-      font-weight: 600;
-      color: #55705a;
-    }
-
-    .notification-status {
-      margin-top: 12px;
-      text-align: center;
-      font-size: 14px;
-      line-height: 1.5;
-      word-break: break-word;
-    }
-
-    .success {
-      color: #55705a;
-    }
-
-    .error {
-      color: #9b3d35;
-    }
-
-    .history-title {
-      margin-top: 30px;
-      margin-bottom: 12px;
-    }
-
-    .history-entry {
-      background: white;
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-
-    .history-date {
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .history-question {
-      font-weight: 600;
-      margin-top: 12px;
-    }
-
-    .history-answer {
-      color: #5d574f;
-      white-space: pre-wrap;
-      margin-top: 4px;
-      line-height: 1.45;
-    }
-
-    .delete-button {
-      margin-top: 14px;
-      background: #f1ece6;
-      color: #765c4d;
-      font-size: 14px;
-      padding: 10px;
-    }
-
-    .privacy {
-      font-size: 13px;
-      color: #81796f;
-      text-align: center;
-      line-height: 1.5;
-      margin-top: 25px;
-    }
-  </style>
+#status {
+  margin-top: 20px;
+  padding: 15px;
+  background: #eee;
+  border-radius: 10px;
+  text-align: center;
+}
+</style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="card">
 
-  <h1>Daglig selvransagelse</h1>
+<h1>Daglig selvransagelse</h1>
 
-  <div class="intro">
-    Brug et par minutter på at være ærlig over for dig selv.
-  </div>
+<p><strong>TEST 1</strong></p>
 
-  <div class="card">
+<button onclick="testButton()">
+🔔 TEST KNAPPEN
+</button>
 
-    <label for="negative">
-      1. Hvad har jeg haft af negative tanker/følelser i dag?
-    </label>
-
-    <textarea id="negative"></textarea>
-
-  </div>
-
-  <div class="card">
-
-    <label for="positive">
-      2. Hvilke positive tanker/følelser har jeg haft i dag?
-    </label>
-
-    <textarea id="positive"></textarea>
-
-  </div>
-
-  <div class="card">
-
-    <label for="sorry">
-      3. Er der nogen jeg vil sige undskyld til i dag?
-    </label>
-
-    <textarea id="sorry"></textarea>
-
-  </div>
-
-  <div class="card">
-
-    <label for="grateful">
-      4. Nævn 2 ting du er taknemmelig for i dag.
-    </label>
-
-    <textarea id="grateful"></textarea>
-
-  </div>
-
-  <div class="card">
-
-    <button class="save-button" onclick="saveEntry()">
-      ✓ Jeg er færdig for i dag
-    </button>
-
-    <div id="message" class="message"></div>
-
-  </div>
-
-  <div class="card">
-
-    <label>
-      🔔 Daglig påmindelse
-    </label>
-
-    <p style="color:#6d665d; line-height:1.5;">
-      Få en notifikation, så du husker din daglige selvransagelse.
-    </p>
-
-    <button
-      class="notification-button"
-      onclick="enableNotifications()">
-      🔔 Aktivér påmindelse
-    </button>
-
-    <div id="notificationStatus"
-         class="notification-status">
-    </div>
-
-  </div>
-
-  <h2 class="history-title">📖 Tidligere dage</h2>
-
-  <div id="history"></div>
-
-  <div class="privacy">
-    Dine svar gemmes kun lokalt på denne enhed.
-    De sendes ikke til andre.
-  </div>
+<div id="status">
+Tryk på knappen ovenfor.
+</div>
 
 </div>
 
-
-<script type="module">
-
-import { initializeApp }
-  from "https://www.gstatic.com/firebasejs/11.10.1/firebase-app.js";
-
-import {
-  getMessaging,
-  register,
-  onRegistered
-} from "https://www.gstatic.com/firebasejs/11.10.1/firebase-messaging.js";
-
-
-/* =========================
-   FIREBASE
-========================= */
-
-const firebaseConfig = {
-
-  apiKey:
-    "AIzaSyAT3yL3DLsbP2X09LlVVdtRYblBEu2PQB4",
-
-  authDomain:
-    "daglig-selvransagelse.firebaseapp.com",
-
-  projectId:
-    "daglig-selvransagelse",
-
-  storageBucket:
-    "daglig-selvransagelse.firebasestorage.app",
-
-  messagingSenderId:
-    "719561955217",
-
-  appId:
-    "1:719561955217:web:9cf07b4916be3a47756c30",
-
-  measurementId:
-    "G-VJL61G94LP"
-};
-
-
-const VAPID_KEY =
-"BFegX-4u2IMOaLx_6e9WkODDZR_ishwuvzdUYmt3w1_Q-YMndVAD9HvxXszXR-Ny2oAhpnPOtGPdxzTcdGj1mEc";
-
-
-const app =
-  initializeApp(firebaseConfig);
-
-const messaging =
-  getMessaging(app);
-
-
-/* =========================
-   LOKAL LAGRING
-========================= */
-
-const STORAGE_KEY =
-  "daglig_selvransagelse_v2";
-
-
-/* =========================
-   GEM DAG
-========================= */
-
-window.saveEntry = function() {
-
-  const negative =
-    document.getElementById("negative").value.trim();
-
-  const positive =
-    document.getElementById("positive").value.trim();
-
-  const sorry =
-    document.getElementById("sorry").value.trim();
-
-  const grateful =
-    document.getElementById("grateful").value.trim();
-
-
-  if (!negative ||
-      !positive ||
-      !sorry ||
-      !grateful) {
-
-    document.getElementById("message").textContent =
-      "Udfyld alle fire spørgsmål først.";
-
-    return;
-  }
-
-
-  const entries =
-    JSON.parse(
-      localStorage.getItem(STORAGE_KEY) || "[]"
-    );
-
-
-  const today =
-    new Date();
-
-
-  const date =
-    today.toLocaleDateString(
-      "da-DK",
-      {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric"
-      }
-    );
-
-
-  entries.unshift({
-
-    date: date,
-
-    timestamp:
-      today.toISOString(),
-
-    negative: negative,
-
-    positive: positive,
-
-    sorry: sorry,
-
-    grateful: grateful
-
-  });
-
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(entries)
-  );
-
-
-  document.getElementById("negative").value = "";
-
-  document.getElementById("positive").value = "";
-
-  document.getElementById("sorry").value = "";
-
-  document.getElementById("grateful").value = "";
-
-
-  document.getElementById("message").textContent =
-    "✓ Din selvransagelse er gemt.";
-
-
-  renderHistory();
-};
-
-
-/* =========================
-   HISTORIK
-========================= */
-
-function renderHistory() {
-
-  const history =
-    document.getElementById("history");
-
-
-  const entries =
-    JSON.parse(
-      localStorage.getItem(STORAGE_KEY) || "[]"
-    );
-
-
-  history.innerHTML = "";
-
-
-  if (entries.length === 0) {
-
-    history.innerHTML =
-      '<div class="history-entry">Ingen tidligere dage endnu.</div>';
-
-    return;
-  }
-
-
-  entries.forEach(
-    (entry, index) => {
-
-      const div =
-        document.createElement("div");
-
-
-      div.className =
-        "history-entry";
-
-
-      div.innerHTML = `
-
-        <div class="history-date">
-          ${escapeHtml(entry.date)}
-        </div>
-
-        <div class="history-question">
-          Negative tanker/følelser
-        </div>
-
-        <div class="history-answer">
-          ${escapeHtml(entry.negative)}
-        </div>
-
-        <div class="history-question">
-          Positive tanker/følelser
-        </div>
-
-        <div class="history-answer">
-          ${escapeHtml(entry.positive)}
-        </div>
-
-        <div class="history-question">
-          Undskyld
-        </div>
-
-        <div class="history-answer">
-          ${escapeHtml(entry.sorry)}
-        </div>
-
-        <div class="history-question">
-          Taknemmelighed
-        </div>
-
-        <div class="history-answer">
-          ${escapeHtml(entry.grateful)}
-        </div>
-
-        <button
-          class="delete-button"
-          onclick="deleteEntry(${index})">
-
-          Slet denne dag
-
-        </button>
-
-      `;
-
-
-      history.appendChild(div);
-
-    }
-  );
+<script>
+
+function testButton() {
+  document.getElementById("status").innerText =
+    "✅ KNAPPEN VIRKER!";
 }
-
-
-/* =========================
-   SLET DAG
-========================= */
-
-window.deleteEntry = function(index) {
-
-  const entries =
-    JSON.parse(
-      localStorage.getItem(STORAGE_KEY) || "[]"
-    );
-
-
-  entries.splice(index, 1);
-
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(entries)
-  );
-
-
-  renderHistory();
-};
-
-
-/* =========================
-   SIKKER TEKST
-========================= */
-
-function escapeHtml(text) {
-
-  const div =
-    document.createElement("div");
-
-  div.textContent =
-    text;
-
-  return div.innerHTML;
-}
-
-
-/* =========================
-   FIREBASE REGISTRERING
-========================= */
-
-onRegistered(
-  messaging,
-  (installationId) => {
-
-    console.log(
-      "Firebase Installation ID:",
-      installationId
-    );
-
-
-    localStorage.setItem(
-      "daglig_selvransagelse_fid",
-      installationId
-    );
-
-
-    const status =
-      document.getElementById(
-        "notificationStatus"
-      );
-
-
-    status.className =
-      "notification-status success";
-
-
-    status.textContent =
-      "✓ Din iPhone er registreret til påmindelser.";
-
-  }
-);
-
-
-/* =========================
-   AKTIVER NOTIFIKATIONER
-========================= */
-
-window.enableNotifications =
-async function() {
-
-  const status =
-    document.getElementById(
-      "notificationStatus"
-    );
-
-
-  status.className =
-    "notification-status";
-
-
-  status.textContent =
-    "Aktiverer påmindelser...";
-
-
-  try {
-
-    if (!("Notification" in window)) {
-
-      throw new Error(
-        "Denne iPhone understøtter ikke webnotifikationer."
-      );
-
-    }
-
-
-    if (!("serviceWorker" in navigator)) {
-
-      throw new Error(
-        "Service Worker understøttes ikke."
-      );
-
-    }
-
-
-    const permission =
-      await Notification.requestPermission();
-
-
-    if (permission !== "granted") {
-
-      throw new Error(
-        "Notifikationer er ikke tilladt."
-      );
-
-    }
-
-
-    /*
-      Registrér FCM med den nye metode.
-    */
-
-    await register(
-      messaging,
-      {
-        vapidKey: VAPID_KEY
-      }
-    );
-
-
-    status.className =
-      "notification-status success";
-
-
-    status.textContent =
-      "✓ Påmindelser er aktiveret.";
-
-  }
-
-  catch (error) {
-
-    console.error(
-      "Firebase fejl:",
-      error
-    );
-
-
-    status.className =
-      "notification-status error";
-
-
-    status.textContent =
-      "FEJL: " +
-      (
-        error.message ||
-        error.name ||
-        String(error)
-      );
-
-  }
-
-};
-
-
-/* =========================
-   START
-========================= */
-
-renderHistory();
 
 </script>
 
