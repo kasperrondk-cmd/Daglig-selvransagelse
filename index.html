@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5f5f5">
+<title>Daglig selvransagelse</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px 15px 40px;
+  background: #f5f5f5;
+  color: #222;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.container {
+  max-width: 600px;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+  font-size: 30px;
+  margin: 10px 0 5px;
+}
+
+.date {
+  text-align: center;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.question {
+  font-weight: 700;
+  margin: 20px 0 8px;
+  line-height: 1.4;
+}
+
+textarea {
+  width: 100%;
+  min-height: 110px;
+  padding: 13px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font: inherit;
+  resize: vertical;
+  background: #fafafa;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #555;
+  background: white;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  border: 0;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.save {
+  background: #222;
+  color: white;
+  margin-top: 20px;
+}
+
+.history-button {
+  background: #eee;
+  color: #222;
+  margin-top: 8px;
+}
+
+.entry {
+  border-top: 1px solid #ddd;
+  padding: 15px 0;
+}
+
+.entry:first-child {
+  border-top: 0;
+}
+
+.entry-date {
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.answer {
+  margin-bottom: 18px;
+}
+
+.answer strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.answer-text {
+  white-space: pre-wrap;
+  color: #444;
+}
+
+.delete {
+  background: #f2f2f2;
+  color: #b00020;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.message {
+  text-align: center;
+  margin-top: 12px;
+  color: #287a35;
+  font-weight: 600;
+}
+
+.info {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+  text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Daglig selvransagelse</h1>
+  <div class="date" id="today"></div>
+
+  <div class="card">
+
+    <div class="question">
+      1. Hvad har jeg haft af negative tanker/følelser i dag?
+    </div>
+    <textarea id="q1" required></textarea>
+
+    <div class="question">
+      2. Hvilke positive tanker/følelser har jeg haft i dag?
+    </div>
+    <textarea id="q2" required></textarea>
+
+    <div class="question">
+      3. Er der nogen jeg vil sige undskyld til i dag?
+    </div>
+    <textarea id="q3" required></textarea>
+
+    <div class="question">
+      4. Nævn 2 ting du er taknemmelig for i dag.
+    </div>
+    <textarea id="q4" required></textarea>
+
+    <button class="save" onclick="saveEntry()">
+      Gem dagens selvransagelse
+    </button>
+
+    <div class="message" id="message"></div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>Min historik</h2>
+
+    <div id="history"></div>
+
+  </div>
+
+  <div class="card">
+    <div class="info">
+      🔒 Dine svar gemmes kun lokalt i denne browser på din iPhone.
+      <br><br>
+      Denne webapp kan ikke blokere andre apps på din iPhone.
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+const STORAGE_KEY = "daglig_selvransagelse_v1";
+
+const questions = [
+  "Hvad har jeg haft af negative tanker/følelser i dag?",
+  "Hvilke positive tanker/følelser har jeg haft i dag?",
+  "Er der nogen jeg vil sige undskyld til i dag?",
+  "Nævn 2 ting du er taknemmelig for i dag."
+];
+
+function todayKey() {
+  const d = new Date();
+
+  return d.getFullYear() + "-" +
+    String(d.getMonth() + 1).padStart(2, "0") + "-" +
+    String(d.getDate()).padStart(2, "0");
+}
+
+function formatDate(date) {
+  return new Date(date + "T12:00:00")
+    .toLocaleDateString("da-DK", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+}
+
+document.getElementById("today").textContent =
+  formatDate(todayKey());
+
+function getEntries() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveEntry() {
+
+  const answers = [
+    document.getElementById("q1").value.trim(),
+    document.getElementById("q2").value.trim(),
+    document.getElementById("q3").value.trim(),
+    document.getElementById("q4").value.trim()
+  ];
+
+  // Alle fire spørgsmål er obligatoriske
+  if (answers.some(answer => answer === "")) {
+
+    document.getElementById("message").textContent =
+      "Du skal besvare alle fire spørgsmål.";
+
+    return;
+  }
+
+  let entries = getEntries();
+
+  const date = todayKey();
+
+  const newEntry = {
+    date: date,
+    answers: answers
+  };
+
+  const existingIndex =
+    entries.findIndex(entry => entry.date === date);
+
+  if (existingIndex >= 0) {
+
+    if (!confirm(
+      "Du har allerede gemt en selvransagelse i dag. Vil du erstatte den?"
+    )) {
+      return;
+    }
+
+    entries[existingIndex] = newEntry;
+
+  } else {
+
+    entries.push(newEntry);
+
+  }
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(entries)
+  );
+
+  document.getElementById("message").textContent =
+    "Din selvransagelse er gemt ✓";
+
+  showHistory();
+}
+
+function showHistory() {
+
+  const history = document.getElementById("history");
+
+  let entries = getEntries();
+
+  entries.sort((a, b) =>
+    b.date.localeCompare(a.date)
+  );
+
+  history.innerHTML = "";
+
+  if (entries.length === 0) {
+
+    history.innerHTML =
+      "<p>Du har endnu ingen gemte selvransagelser.</p>";
+
+    return;
+  }
+
+  entries.forEach(entry => {
+
+    const div = document.createElement("div");
+
+    div.className = "entry";
+
+    let html =
+      '<div class="entry-date">' +
+      formatDate(entry.date) +
+      '</div>';
+
+    entry.answers.forEach((answer, index) => {
+
+      html +=
+        '<div class="answer">' +
+        '<strong>' + questions[index] + '</strong>' +
+        '<div class="answer-text">' +
+        escapeHtml(answer) +
+        '</div>' +
+        '</div>';
+
+    });
+
+    html +=
+      '<button class="delete" onclick="deleteEntry(\'' +
+      entry.date +
+      '\')">Slet denne dag</button>';
+
+    div.innerHTML = html;
+
+    history.appendChild(div);
+
+  });
+}
+
+function deleteEntry(date) {
+
+  if (!confirm(
+    "Er du sikker på, at du vil slette denne dag?"
+  )) {
+    return;
+  }
+
+  let entries = getEntries();
+
+  entries =
+    entries.filter(entry => entry.date !== date);
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(entries)
+  );
+
+  showHistory();
+}
+
+function escapeHtml(text) {
+
+  const div = document.createElement("div");
+
+  div.textContent = text;
+
+  return div.innerHTML;
+}
+
+// Hent dagens eventuelle eksisterende svar
+function loadToday() {
+
+  const entries = getEntries();
+
+  const today =
+    entries.find(entry => entry.date === todayKey());
+
+  if (!today) return;
+
+  document.getElementById("q1").value =
+    today.answers[0] || "";
+
+  document.getElementById("q2").value =
+    today.answers[1] || "";
+
+  document.getElementById("q3").value =
+    today.answers[2] || "";
+
+  document.getElementById("q4").value =
+    today.answers[3] || "";
+}
+
+showHistory();
+loadToday();
+
+</script>
+
+</body>
+</html>
