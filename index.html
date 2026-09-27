@@ -43,6 +43,7 @@ button {
   background: #eee;
   border-radius: 10px;
   text-align: center;
+  word-break: break-word;
 }
 </style>
 </head>
@@ -57,15 +58,47 @@ button {
 🔔 TEST NOTIFIKATION
 </button>
 
+<button onclick="registerFirebase()">
+🔥 TEST FIREBASE
+</button>
+
 <div id="status">
-Tryk på knappen.
+Tryk på en knap.
 </div>
 
 </div>
 
-<script>
+<script type="module">
 
-async function testNotification() {
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/11.10.1/firebase-app.js";
+
+import {
+  getMessaging,
+  register
+}
+from "https://www.gstatic.com/firebasejs/11.10.1/firebase-messaging.js";
+
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAT3yL3DLsbP2X09LlVVdtRYblBEu2PQ4B",
+  authDomain: "daglig-selvransagelse.firebaseapp.com",
+  projectId: "daglig-selvransagelse",
+  storageBucket: "daglig-selvransagelse.firebasestorage.app",
+  messagingSenderId: "719561955217",
+  appId: "1:719561955217:web:9cf07b4916be3a47756c30",
+  measurementId: "G-VJL61G94LP"
+};
+
+const VAPID_KEY =
+"BFegX-4u2IMOaLx_6e9WkODDZR_ishwuvzdUYmt3w1_Q-YMndVAD9HvxXszXR-Ny2oAhpnPOtGPdxzTcdGj1mEc";
+
+
+const app = initializeApp(firebaseConfig);
+const messaging = getMessaging(app);
+
+
+window.testNotification = async function() {
 
   const status = document.getElementById("status");
 
@@ -74,7 +107,8 @@ async function testNotification() {
     const permission = await Notification.requestPermission();
 
     if (permission !== "granted") {
-      status.innerText = "❌ Notifikationer er ikke tilladt.";
+      status.innerText =
+        "❌ Notifikationer er ikke tilladt.";
       return;
     }
 
@@ -85,15 +119,66 @@ async function testNotification() {
       }
     );
 
-    status.innerText = "✅ Notifikation sendt!";
+    status.innerText =
+      "✅ Notifikation sendt!";
 
   } catch (error) {
 
-    status.innerText = "❌ FEJL: " + error.message;
+    status.innerText =
+      "❌ FEJL: " + error.message;
 
   }
 
-}
+};
+
+
+window.registerFirebase = async function() {
+
+  const status = document.getElementById("status");
+
+  status.innerText =
+    "⏳ Registrerer Firebase...";
+
+  try {
+
+    const permission =
+      await Notification.requestPermission();
+
+    if (permission !== "granted") {
+
+      status.innerText =
+        "❌ Notifikationer er ikke tilladt.";
+
+      return;
+    }
+
+    const registration =
+      await navigator.serviceWorker.register(
+        "./firebase-messaging-sw.js"
+      );
+
+    status.innerText =
+      "⏳ Service Worker fundet. Registrerer Firebase...";
+
+    await register(messaging, {
+      vapidKey: VAPID_KEY,
+      serviceWorkerRegistration: registration
+    });
+
+    status.innerText =
+      "✅ Firebase-registrering lykkedes!";
+
+  } catch (error) {
+
+    status.innerText =
+      "❌ FIREBASE FEJL: " +
+      error.name +
+      " — " +
+      error.message;
+
+  }
+
+};
 
 </script>
 
