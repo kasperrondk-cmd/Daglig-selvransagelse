@@ -71,20 +71,25 @@ async function testNotification() {
 
   try {
 
-    if (!("Notification" in window)) {
-      status.innerText = "❌ Denne app understøtter ikke notifikationer.";
+    const permission = await Notification.requestPermission();
+
+    if (permission !== "granted") {
+      status.innerText = "❌ Notifikationer er ikke tilladt.";
       return;
     }
 
-    const permission = await Notification.requestPermission();
+    new Notification(
+      "Daglig selvransagelse",
+      {
+        body: "🎉 Din testnotifikation virker!"
+      }
+    );
 
-    status.innerText =
-      "Resultat: " + permission;
+    status.innerText = "✅ Notifikation sendt!";
 
   } catch (error) {
 
-    status.innerText =
-      "❌ FEJL: " + error.message;
+    status.innerText = "❌ FEJL: " + error.message;
 
   }
 
