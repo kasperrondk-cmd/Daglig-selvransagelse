@@ -3,83 +3,327 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Firebase test</title>
+<title>Daglig selvransagelse</title>
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
   background: #f5f1eb;
-  padding: 30px;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.container {
+  max-width: 650px;
+  margin: auto;
 }
 
 .card {
   background: white;
-  padding: 25px;
   border-radius: 18px;
-  max-width: 500px;
-  margin: auto;
+  padding: 22px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+}
+
+h1 {
+  text-align: center;
+  margin-top: 5px;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+.question {
+  margin-top: 25px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 110px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 16px;
+  resize: vertical;
 }
 
 button {
   width: 100%;
-  padding: 16px;
-  margin-top: 15px;
+  padding: 15px;
+  border: 0;
+  border-radius: 12px;
+  background: #333;
+  color: white;
   font-size: 17px;
+  margin-top: 15px;
 }
 
-#status {
-  margin-top: 20px;
-  padding: 15px;
+button.delete {
   background: #eee;
+  color: #333;
+  font-size: 14px;
+}
+
+.history-entry {
+  border-top: 1px solid #ddd;
+  padding: 18px 0;
+}
+
+.date {
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.answer {
+  margin-bottom: 12px;
+}
+
+.status {
+  text-align: center;
+  margin-top: 15px;
+  font-weight: bold;
 }
 </style>
 </head>
 
 <body>
 
+<div class="container">
+
 <div class="card">
 
-<h1>Firebase test</h1>
+<h1>Daglig selvransagelse</h1>
 
-<button onclick="testFirebase()">
-🔥 TEST FIREBASE
+<p style="text-align:center;">
+Tag et øjeblik og vær ærlig over for dig selv.
+</p>
+
+<div class="question">
+<label>1. Hvad har jeg haft af negative tanker/følelser i dag?</label>
+<textarea id="q1"></textarea>
+</div>
+
+<div class="question">
+<label>2. Hvilke positive tanker/følelser har jeg haft i dag?</label>
+<textarea id="q2"></textarea>
+</div>
+
+<div class="question">
+<label>3. Er der nogen jeg vil sige undskyld til i dag?</label>
+<textarea id="q3"></textarea>
+</div>
+
+<div class="question">
+<label>4. Nævn 2 ting du er taknemmelig for i dag.</label>
+<textarea id="q4"></textarea>
+</div>
+
+<button onclick="saveEntry()">
+💾 Gem dagens selvransagelse
 </button>
 
-<div id="status">
-Tryk på knappen.
+<div id="status" class="status"></div>
+
+</div>
+
+
+<div class="card">
+
+<h2>📖 Historik</h2>
+
+<div id="history">
+Ingen tidligere selvransagelser endnu.
 </div>
 
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/11.10.1/firebase-app-compat.js"></script>
+</div>
+
 
 <script>
 
-function testFirebase() {
+const STORAGE_KEY = "daglig_selvransagelse_v2";
 
-  const status = document.getElementById("status");
+
+function getEntries() {
 
   try {
 
-    if (typeof firebase === "undefined") {
+    return JSON.parse(
+      localStorage.getItem(STORAGE_KEY)
+    ) || [];
 
-      status.innerText =
-        "❌ Firebase blev ikke indlæst.";
+  } catch {
 
-      return;
-    }
-
-    status.innerText =
-      "✅ Firebase blev indlæst!";
-
-  } catch (error) {
-
-    status.innerText =
-      "❌ FEJL: " + error.message;
+    return [];
 
   }
 
 }
+
+
+function saveEntry() {
+
+  const entry = {
+
+    date: new Date().toLocaleDateString("da-DK"),
+
+    timestamp: new Date().toISOString(),
+
+    q1: document.getElementById("q1").value,
+
+    q2: document.getElementById("q2").value,
+
+    q3: document.getElementById("q3").value,
+
+    q4: document.getElementById("q4").value
+
+  };
+
+
+  const entries = getEntries();
+
+
+  entries.unshift(entry);
+
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(entries)
+  );
+
+
+  document.getElementById("status").innerText =
+    "✅ Dagens selvransagelse er gemt.";
+
+
+  document.getElementById("q1").value = "";
+  document.getElementById("q2").value = "";
+  document.getElementById("q3").value = "";
+  document.getElementById("q4").value = "";
+
+
+  showHistory();
+
+}
+
+
+function deleteEntry(index) {
+
+  if (!confirm("Vil du slette denne selvransagelse?")) {
+    return;
+  }
+
+
+  const entries = getEntries();
+
+  entries.splice(index, 1);
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(entries)
+  );
+
+  showHistory();
+
+}
+
+
+function showHistory() {
+
+  const container =
+    document.getElementById("history");
+
+  const entries = getEntries();
+
+
+  if (entries.length === 0) {
+
+    container.innerHTML =
+      "Ingen tidligere selvransagelser endnu.";
+
+    return;
+
+  }
+
+
+  container.innerHTML = "";
+
+
+  entries.forEach((entry, index) => {
+
+    const div = document.createElement("div");
+
+    div.className = "history-entry";
+
+
+    div.innerHTML = `
+
+      <div class="date">
+        ${entry.date}
+      </div>
+
+      <div class="answer">
+        <strong>Negative tanker/følelser:</strong><br>
+        ${escapeHtml(entry.q1)}
+      </div>
+
+      <div class="answer">
+        <strong>Positive tanker/følelser:</strong><br>
+        ${escapeHtml(entry.q2)}
+      </div>
+
+      <div class="answer">
+        <strong>Undskyld:</strong><br>
+        ${escapeHtml(entry.q3)}
+      </div>
+
+      <div class="answer">
+        <strong>Taknemmelig for:</strong><br>
+        ${escapeHtml(entry.q4)}
+      </div>
+
+      <button
+        class="delete"
+        onclick="deleteEntry(${index})">
+        🗑 Slet
+      </button>
+
+    `;
+
+
+    container.appendChild(div);
+
+  });
+
+}
+
+
+function escapeHtml(text) {
+
+  const div = document.createElement("div");
+
+  div.textContent = text || "";
+
+  return div.innerHTML;
+
+}
+
+
+showHistory();
 
 </script>
 
