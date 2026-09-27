@@ -1,315 +1,245 @@
 <!DOCTYPE html>
 <html lang="da">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#f4f1eb">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>Daglig selvransagelse</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Selvransagelse">
 
-<style>
-* { box-sizing: border-box; }
+  <title>Daglig selvransagelse</title>
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: #f4f1eb;
-  color: #292722;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-.container {
-  max-width: 620px;
-  margin: auto;
-  padding: 24px 16px 45px;
-}
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f1ea;
+      color: #292621;
+    }
 
-.header {
-  text-align: center;
-  padding: 15px 5px 25px;
-}
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
 
-.icon {
-  font-size: 42px;
-  margin-bottom: 8px;
-}
+    h1 {
+      text-align: center;
+      margin: 10px 0 8px;
+      font-size: 30px;
+    }
 
-h1 {
-  margin: 0;
-  font-size: 30px;
-  font-weight: 750;
-}
+    .intro {
+      text-align: center;
+      color: #6d665d;
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
 
-.subtitle {
-  margin-top: 7px;
-  color: #77736c;
-  font-size: 15px;
-}
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+    }
 
-.date {
-  margin-top: 12px;
-  color: #77736c;
-  font-size: 14px;
-  text-transform: capitalize;
-}
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
 
-.card {
-  background: rgba(255,255,255,0.92);
-  border-radius: 20px;
-  padding: 20px;
-  margin-bottom: 18px;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.06);
-}
+    textarea {
+      width: 100%;
+      min-height: 110px;
+      border: 1px solid #ddd5ca;
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 16px;
+      font-family: inherit;
+      resize: vertical;
+      background: #fcfaf7;
+    }
 
-.intro {
-  line-height: 1.55;
-  color: #5f5b54;
-  font-size: 15px;
-}
+    textarea:focus {
+      outline: none;
+      border-color: #8c7b68;
+    }
 
-.question {
-  font-weight: 700;
-  line-height: 1.45;
-  margin: 21px 0 8px;
-}
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 13px;
+      padding: 15px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
 
-textarea {
-  width: 100%;
-  min-height: 105px;
-  border: 1px solid #d5d1ca;
-  border-radius: 13px;
-  padding: 13px;
-  font: inherit;
-  font-size: 16px;
-  color: #292722;
-  background: #faf9f7;
-  resize: vertical;
-}
+    .save-button {
+      background: #292621;
+      color: white;
+      margin-top: 4px;
+    }
 
-textarea:focus {
-  outline: none;
-  border-color: #77736c;
-  background: white;
-}
+    .notification-button {
+      background: #e9e0d5;
+      color: #292621;
+    }
 
-textarea::placeholder {
-  color: #aaa59d;
-}
+    .message {
+      text-align: center;
+      margin: 14px 0;
+      font-weight: 600;
+      color: #55705a;
+    }
 
-.finish,
-.notify {
-  width: 100%;
-  margin-top: 22px;
-  padding: 15px;
-  border: 0;
-  border-radius: 14px;
-  background: #3f5143;
-  color: white;
-  font-size: 17px;
-  font-weight: 700;
-}
+    .history-title {
+      margin-top: 30px;
+      margin-bottom: 12px;
+    }
 
-.notify {
-  margin-top: 0;
-  background: #5d675e;
-}
+    .history-entry {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
 
-.finish:active,
-.notify:active {
-  transform: scale(0.98);
-}
+    .history-date {
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
 
-.message {
-  text-align: center;
-  margin-top: 12px;
-  min-height: 20px;
-  color: #3f5143;
-  font-weight: 600;
-}
+    .history-question {
+      font-weight: 600;
+      margin-top: 12px;
+    }
 
-.history-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
+    .history-answer {
+      color: #5d574f;
+      white-space: pre-wrap;
+      margin-top: 4px;
+      line-height: 1.45;
+    }
 
-.history-title h2 {
-  margin: 0;
-  font-size: 21px;
-}
+    .delete-button {
+      margin-top: 14px;
+      background: #f1ece6;
+      color: #765c4d;
+      font-size: 14px;
+      padding: 10px;
+    }
 
-.count {
-  color: #77736c;
-  font-size: 13px;
-}
+    .privacy {
+      font-size: 13px;
+      color: #81796f;
+      text-align: center;
+      line-height: 1.5;
+      margin-top: 25px;
+    }
 
-.entry {
-  border-top: 1px solid #e1ded8;
-  margin-top: 15px;
-  padding-top: 15px;
-}
-
-.entry-date {
-  font-weight: 700;
-  margin-bottom: 10px;
-  text-transform: capitalize;
-}
-
-.entry-status {
-  color: #3f5143;
-  font-size: 14px;
-  margin-bottom: 12px;
-}
-
-.answer {
-  margin-bottom: 17px;
-}
-
-.answer strong {
-  display: block;
-  margin-bottom: 5px;
-  font-size: 14px;
-}
-
-.answer-text {
-  white-space: pre-wrap;
-  color: #5f5b54;
-  line-height: 1.45;
-  font-size: 14px;
-}
-
-.delete {
-  border: 0;
-  background: transparent;
-  color: #a33b3b;
-  padding: 8px 0;
-  font-size: 14px;
-}
-
-.info {
-  text-align: center;
-  color: #77736c;
-  font-size: 13px;
-  line-height: 1.55;
-}
-
-.empty {
-  color: #77736c;
-  font-size: 14px;
-  margin-top: 15px;
-}
-</style>
+    .notification-status {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 14px;
+      color: #55705a;
+    }
+  </style>
 </head>
 
 <body>
 
 <div class="container">
 
-  <div class="header">
-    <div class="icon">🧠</div>
-    <h1>Daglig selvransagelse</h1>
+  <h1>Daglig selvransagelse</h1>
 
-    <div class="subtitle">
-      Et øjeblik til at stoppe op og mærke efter
-    </div>
-
-    <div class="date" id="today"></div>
+  <div class="intro">
+    Brug et par minutter på at være ærlig over for dig selv.
   </div>
 
   <div class="card">
 
-    <div class="intro">
-      Brug et par minutter på at være ærlig over for dig selv.
-      Der findes ingen rigtige eller forkerte svar.
-    </div>
-
-    <div class="question">
+    <label for="negative">
       1. Hvad har jeg haft af negative tanker/følelser i dag?
-    </div>
+    </label>
 
-    <textarea id="q1"
-      placeholder="Skriv det, der fylder..."
-      required></textarea>
+    <textarea id="negative"></textarea>
 
-    <div class="question">
+  </div>
+
+  <div class="card">
+
+    <label for="positive">
       2. Hvilke positive tanker/følelser har jeg haft i dag?
-    </div>
+    </label>
 
-    <textarea id="q2"
-      placeholder="Hvad har været godt, rart eller positivt?"
-      required></textarea>
+    <textarea id="positive"></textarea>
 
-    <div class="question">
+  </div>
+
+  <div class="card">
+
+    <label for="sorry">
       3. Er der nogen jeg vil sige undskyld til i dag?
-    </div>
+    </label>
 
-    <textarea id="q3"
-      placeholder="Skriv dine tanker..."
-      required></textarea>
+    <textarea id="sorry"></textarea>
 
-    <div class="question">
+  </div>
+
+  <div class="card">
+
+    <label for="grateful">
       4. Nævn 2 ting du er taknemmelig for i dag.
-    </div>
+    </label>
 
-    <textarea id="q4"
-      placeholder="1.&#10;2."
-      required></textarea>
+    <textarea id="grateful"></textarea>
 
-    <button class="finish" onclick="saveEntry()">
+  </div>
+
+  <div class="card">
+
+    <button class="save-button" onclick="saveEntry()">
       ✓ Jeg er færdig for i dag
     </button>
 
-    <div class="message" id="message"></div>
+    <div id="message" class="message"></div>
 
   </div>
 
-  <!-- NOTIFIKATIONER -->
-
   <div class="card">
 
-    <div class="question" style="margin-top:0;">
+    <label>
       🔔 Daglig påmindelse
-    </div>
+    </label>
 
-    <div class="intro">
-      Aktivér notifikationer, så vi senere kan sende din
-      daglige påmindelse kl. 21.
-    </div>
+    <p style="color:#6d665d; line-height:1.5;">
+      Få en notifikation, så du husker din daglige selvransagelse.
+    </p>
 
-    <button class="notify" onclick="enableNotifications()">
+    <button class="notification-button" onclick="enableNotifications()">
       🔔 Aktivér påmindelse
     </button>
 
-    <div class="message" id="notificationMessage"></div>
+    <div id="notificationStatus" class="notification-status"></div>
 
   </div>
 
-  <!-- HISTORIK -->
+  <h2 class="history-title">📖 Tidligere dage</h2>
 
-  <div class="card">
+  <div id="history"></div>
 
-    <div class="history-title">
-      <h2>Min historik</h2>
-      <div class="count" id="count"></div>
-    </div>
-
-    <div id="history"></div>
-
-  </div>
-
-  <div class="card">
-
-    <div class="info">
-      🔒 Dine svar gemmes lokalt på denne enhed.
-      <br><br>
-      De bliver ikke sendt til en dagbogstjeneste.
-      <br><br>
-      Husk at sikkerhedskopiere dine data, hvis du rydder
-      Safari's webstedsdata.
-    </div>
-
+  <div class="privacy">
+    Dine svar gemmes kun lokalt på denne enhed.
+    De sendes ikke til andre.
   </div>
 
 </div>
@@ -319,10 +249,6 @@ textarea::placeholder {
 <script src="https://www.gstatic.com/firebasejs/11.10.1/firebase-messaging-compat.js"></script>
 
 <script>
-
-const STORAGE_KEY = "daglig_selvransagelse_v2";
-
-/* Firebase */
 
 const firebaseConfig = {
   apiKey: "AIzaSyAT3yL3DLsbP2X09LlVVdtRYblBEu2PQB4",
@@ -334,29 +260,204 @@ const firebaseConfig = {
   measurementId: "G-VJL61G94LP"
 };
 
+const VAPID_KEY =
+"BFegX-4u2IMOaLx_6e9WkODDZR_ishwuvzdUYmt3w1_Q-YMndVAD9HvxXszXR-Ny2oAhpnPOtGPdxzTcdGj1mEc";
+
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
 
-const VAPID_KEY =
-  "BFegX-4u2IMOaLx_6e9WkODDZR_ishwuvzdUYmt3w1_Q-YMndVAD9HvxXszXR-Ny2oAhpnPOtGPdxzTcdGj1mEc";
+const STORAGE_KEY = "daglig_selvransagelse_v2";
 
 
-/* Spørg om notifikationer */
+/* -----------------------------
+   GEM DAGLIG SELVRANSAGELSE
+----------------------------- */
+
+function saveEntry() {
+
+  const negative = document.getElementById("negative").value.trim();
+  const positive = document.getElementById("positive").value.trim();
+  const sorry = document.getElementById("sorry").value.trim();
+  const grateful = document.getElementById("grateful").value.trim();
+
+  if (!negative || !positive || !sorry || !grateful) {
+    document.getElementById("message").textContent =
+      "Udfyld alle fire spørgsmål først.";
+    return;
+  }
+
+  const entries =
+    JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+  const today = new Date();
+
+  const date =
+    today.toLocaleDateString("da-DK", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric"
+    });
+
+  const entry = {
+    date: date,
+    timestamp: today.toISOString(),
+    negative: negative,
+    positive: positive,
+    sorry: sorry,
+    grateful: grateful
+  };
+
+  entries.unshift(entry);
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(entries)
+  );
+
+  document.getElementById("negative").value = "";
+  document.getElementById("positive").value = "";
+  document.getElementById("sorry").value = "";
+  document.getElementById("grateful").value = "";
+
+  document.getElementById("message").textContent =
+    "✓ Din selvransagelse er gemt.";
+
+  renderHistory();
+}
+
+
+/* -----------------------------
+   VIS HISTORIK
+----------------------------- */
+
+function renderHistory() {
+
+  const history = document.getElementById("history");
+
+  const entries =
+    JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+  history.innerHTML = "";
+
+  if (entries.length === 0) {
+    history.innerHTML =
+      '<div class="history-entry">Ingen tidligere dage endnu.</div>';
+    return;
+  }
+
+  entries.forEach((entry, index) => {
+
+    const div = document.createElement("div");
+
+    div.className = "history-entry";
+
+    div.innerHTML = `
+      <div class="history-date">
+        ${escapeHtml(entry.date)}
+      </div>
+
+      <div class="history-question">
+        Negative tanker/følelser
+      </div>
+
+      <div class="history-answer">
+        ${escapeHtml(entry.negative)}
+      </div>
+
+      <div class="history-question">
+        Positive tanker/følelser
+      </div>
+
+      <div class="history-answer">
+        ${escapeHtml(entry.positive)}
+      </div>
+
+      <div class="history-question">
+        Undskyld
+      </div>
+
+      <div class="history-answer">
+        ${escapeHtml(entry.sorry)}
+      </div>
+
+      <div class="history-question">
+        Taknemmelighed
+      </div>
+
+      <div class="history-answer">
+        ${escapeHtml(entry.grateful)}
+      </div>
+
+      <button
+        class="delete-button"
+        onclick="deleteEntry(${index})">
+        Slet denne dag
+      </button>
+    `;
+
+    history.appendChild(div);
+  });
+}
+
+
+/* -----------------------------
+   SLET DAG
+----------------------------- */
+
+function deleteEntry(index) {
+
+  const entries =
+    JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+  entries.splice(index, 1);
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(entries)
+  );
+
+  renderHistory();
+}
+
+
+/* -----------------------------
+   SIKKER TEKST
+----------------------------- */
+
+function escapeHtml(text) {
+
+  const div = document.createElement("div");
+
+  div.textContent = text;
+
+  return div.innerHTML;
+}
+
+
+/* -----------------------------
+   AKTIVER NOTIFIKATIONER
+----------------------------- */
 
 async function enableNotifications() {
 
-  const message =
-    document.getElementById("notificationMessage");
+  const status =
+    document.getElementById("notificationStatus");
+
+  status.textContent = "Aktiverer...";
 
   try {
 
     if (!("Notification" in window)) {
+      throw new Error(
+        "Denne enhed understøtter ikke notifikationer."
+      );
+    }
 
-      message.textContent =
-        "Din iPhone understøtter ikke notifikationer her.";
-
-      return;
+    if (!("serviceWorker" in navigator)) {
+      throw new Error(
+        "Service Worker understøttes ikke."
+      );
     }
 
     const permission =
@@ -364,51 +465,72 @@ async function enableNotifications() {
 
     if (permission !== "granted") {
 
-      message.textContent =
+      status.textContent =
         "Notifikationer blev ikke tilladt.";
 
       return;
     }
 
-    message.textContent =
-      "Registrerer din iPhone...";
+
+    /* Registrer Firebase service worker */
+
+    const registration =
+      await navigator.serviceWorker.register(
+        "/Daglig-selvransagelse/firebase-messaging-sw.js"
+      );
+
+
+    /* Vent på at service workeren er klar */
+
+    await navigator.serviceWorker.ready;
+
+
+    /* Hent Firebase registreringskode */
 
     const token =
       await messaging.getToken({
-        vapidKey: VAPID_KEY
+        vapidKey: VAPID_KEY,
+        serviceWorkerRegistration: registration
       });
 
+
     if (!token) {
-
-      message.textContent =
-        "Kunne ikke registrere din iPhone endnu.";
-
-      return;
+      throw new Error(
+        "Der blev ikke oprettet en registreringskode."
+      );
     }
+
+
+    /* Gem token lokalt */
 
     localStorage.setItem(
       "daglig_selvransagelse_fcm_token",
       token
     );
 
-    message.textContent =
+
+    status.textContent =
       "✓ Notifikationer er aktiveret.";
 
-    console.log("FCM TOKEN:", token);
+    console.log(
+      "Firebase registreringskode:",
+      token
+    );
 
   } catch (error) {
 
     console.error(error);
 
-    message.textContent =
+    status.textContent =
       "Der opstod en fejl. Prøv igen.";
 
   }
-
 }
 
 
-/* Modtag besked mens appen er åben */
+/* -----------------------------
+   MODTAG BESKEDER NÅR APPEN ER ÅBEN
+----------------------------- */
 
 messaging.onMessage((payload) => {
 
@@ -420,310 +542,11 @@ messaging.onMessage((payload) => {
 });
 
 
-/* Dagbog */
-
-const questions = [
-
-  "Hvad har jeg haft af negative tanker/følelser i dag?",
-
-  "Hvilke positive tanker/følelser har jeg haft i dag?",
-
-  "Er der nogen jeg vil sige undskyld til i dag?",
-
-  "Nævn 2 ting du er taknemmelig for i dag."
-
-];
-
-
-function todayKey() {
-
-  const d = new Date();
-
-  return d.getFullYear() +
-    "-" +
-    String(d.getMonth() + 1).padStart(2, "0") +
-    "-" +
-    String(d.getDate()).padStart(2, "0");
-
-}
-
-
-function formatDate(date) {
-
-  return new Date(date + "T12:00:00")
-    .toLocaleDateString("da-DK", {
-
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric"
-
-    });
-
-}
-
-
-document.getElementById("today").textContent =
-  formatDate(todayKey());
-
-
-function getEntries() {
-
-  try {
-
-    return JSON.parse(
-      localStorage.getItem(STORAGE_KEY)
-    ) || [];
-
-  } catch {
-
-    return [];
-
-  }
-
-}
-
-
-function saveEntry() {
-
-  const answers = [
-
-    document.getElementById("q1").value.trim(),
-
-    document.getElementById("q2").value.trim(),
-
-    document.getElementById("q3").value.trim(),
-
-    document.getElementById("q4").value.trim()
-
-  ];
-
-
-  if (answers.some(answer => answer === "")) {
-
-    document.getElementById("message").textContent =
-      "Du skal besvare alle fire spørgsmål.";
-
-    return;
-
-  }
-
-
-  let entries = getEntries();
-
-  const date = todayKey();
-
-
-  const newEntry = {
-    date: date,
-    answers: answers
-  };
-
-
-  const existingIndex =
-    entries.findIndex(entry => entry.date === date);
-
-
-  if (existingIndex >= 0) {
-
-    if (!confirm(
-      "Du har allerede gemt en selvransagelse i dag. Vil du erstatte den?"
-    )) {
-
-      return;
-
-    }
-
-    entries[existingIndex] = newEntry;
-
-  } else {
-
-    entries.push(newEntry);
-
-  }
-
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(entries)
-  );
-
-
-  document.getElementById("message").textContent =
-    "Godt gået. Du har taget dig tid til dig selv i dag ✓";
-
-
-  showHistory();
-
-}
-
-
-function showHistory() {
-
-  const history =
-    document.getElementById("history");
-
-  const count =
-    document.getElementById("count");
-
-  let entries = getEntries();
-
-
-  entries.sort((a, b) =>
-    b.date.localeCompare(a.date)
-  );
-
-
-  count.textContent =
-    entries.length +
-    (entries.length === 1 ? " dag" : " dage");
-
-
-  history.innerHTML = "";
-
-
-  if (entries.length === 0) {
-
-    history.innerHTML =
-      '<div class="empty">Din historik er tom endnu.</div>';
-
-    return;
-
-  }
-
-
-  entries.forEach(entry => {
-
-    const div =
-      document.createElement("div");
-
-    div.className = "entry";
-
-
-    let html =
-
-      '<div class="entry-date">' +
-      formatDate(entry.date) +
-      '</div>' +
-
-      '<div class="entry-status">' +
-      '✓ Selvransagelse gennemført' +
-      '</div>';
-
-
-    entry.answers.forEach((answer, index) => {
-
-      html +=
-
-        '<div class="answer">' +
-
-        '<strong>' +
-        questions[index] +
-        '</strong>' +
-
-        '<div class="answer-text">' +
-        escapeHtml(answer) +
-        '</div>' +
-
-        '</div>';
-
-    });
-
-
-    html +=
-
-      '<button class="delete" ' +
-      'onclick="deleteEntry(\'' +
-      entry.date +
-      '\')">' +
-
-      'Slet denne dag' +
-
-      '</button>';
-
-
-    div.innerHTML = html;
-
-    history.appendChild(div);
-
-  });
-
-}
-
-
-function deleteEntry(date) {
-
-  if (!confirm(
-    "Er du sikker på, at du vil slette denne dag?"
-  )) {
-
-    return;
-
-  }
-
-
-  let entries = getEntries();
-
-  entries =
-    entries.filter(entry => entry.date !== date);
-
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(entries)
-  );
-
-
-  showHistory();
-
-}
-
-
-function escapeHtml(text) {
-
-  const div =
-    document.createElement("div");
-
-  div.textContent = text;
-
-  return div.innerHTML;
-
-}
-
-
-function loadToday() {
-
-  const entries =
-    getEntries();
-
-
-  const today =
-    entries.find(entry =>
-      entry.date === todayKey()
-    );
-
-
-  if (!today) return;
-
-
-  document.getElementById("q1").value =
-    today.answers[0] || "";
-
-  document.getElementById("q2").value =
-    today.answers[1] || "";
-
-  document.getElementById("q3").value =
-    today.answers[2] || "";
-
-  document.getElementById("q4").value =
-    today.answers[3] || "";
-
-}
-
-
-showHistory();
-
-loadToday();
+/* -----------------------------
+   START
+----------------------------- */
+
+renderHistory();
 
 </script>
 
