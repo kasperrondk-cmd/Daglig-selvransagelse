@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Selvransagelse">
@@ -100,6 +101,22 @@
       color: #55705a;
     }
 
+    .notification-status {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .error {
+      color: #9b3d35;
+    }
+
+    .success {
+      color: #55705a;
+    }
+
     .history-title {
       margin-top: 30px;
       margin-bottom: 12px;
@@ -144,13 +161,6 @@
       text-align: center;
       line-height: 1.5;
       margin-top: 25px;
-    }
-
-    .notification-status {
-      margin-top: 10px;
-      text-align: center;
-      font-size: 14px;
-      color: #55705a;
     }
   </style>
 </head>
@@ -225,11 +235,15 @@
       Få en notifikation, så du husker din daglige selvransagelse.
     </p>
 
-    <button class="notification-button" onclick="enableNotifications()">
+    <button
+      class="notification-button"
+      onclick="enableNotifications()">
       🔔 Aktivér påmindelse
     </button>
 
-    <div id="notificationStatus" class="notification-status"></div>
+    <div id="notificationStatus"
+         class="notification-status">
+    </div>
 
   </div>
 
@@ -244,231 +258,333 @@
 
 </div>
 
+
 <!-- Firebase -->
+
 <script src="https://www.gstatic.com/firebasejs/11.10.1/firebase-app-compat.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/11.10.1/firebase-messaging-compat.js"></script>
+
 
 <script>
 
 const firebaseConfig = {
+
   apiKey: "AIzaSyAT3yL3DLsbP2X09LlVVdtRYblBEu2PQB4",
-  authDomain: "daglig-selvransagelse.firebaseapp.com",
-  projectId: "daglig-selvransagelse",
-  storageBucket: "daglig-selvransagelse.firebasestorage.app",
-  messagingSenderId: "719561955217",
-  appId: "1:719561955217:web:9cf07b4916be3a47756c30",
-  measurementId: "G-VJL61G94LP"
+
+  authDomain:
+    "daglig-selvransagelse.firebaseapp.com",
+
+  projectId:
+    "daglig-selvransagelse",
+
+  storageBucket:
+    "daglig-selvransagelse.firebasestorage.app",
+
+  messagingSenderId:
+    "719561955217",
+
+  appId:
+    "1:719561955217:web:9cf07b4916be3a47756c30",
+
+  measurementId:
+    "G-VJL61G94LP"
 };
+
 
 const VAPID_KEY =
 "BFegX-4u2IMOaLx_6e9WkODDZR_ishwuvzdUYmt3w1_Q-YMndVAD9HvxXszXR-Ny2oAhpnPOtGPdxzTcdGj1mEc";
+
 
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
 
-const STORAGE_KEY = "daglig_selvransagelse_v2";
+const STORAGE_KEY =
+  "daglig_selvransagelse_v2";
 
 
-/* -----------------------------
-   GEM DAGLIG SELVRANSAGELSE
------------------------------ */
+/* =========================
+   GEM SELVRANSAGELSE
+========================= */
 
 function saveEntry() {
 
-  const negative = document.getElementById("negative").value.trim();
-  const positive = document.getElementById("positive").value.trim();
-  const sorry = document.getElementById("sorry").value.trim();
-  const grateful = document.getElementById("grateful").value.trim();
+  const negative =
+    document.getElementById("negative").value.trim();
 
-  if (!negative || !positive || !sorry || !grateful) {
+  const positive =
+    document.getElementById("positive").value.trim();
+
+  const sorry =
+    document.getElementById("sorry").value.trim();
+
+  const grateful =
+    document.getElementById("grateful").value.trim();
+
+
+  if (!negative ||
+      !positive ||
+      !sorry ||
+      !grateful) {
+
     document.getElementById("message").textContent =
       "Udfyld alle fire spørgsmål først.";
+
     return;
   }
 
+
   const entries =
-    JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "[]"
+    );
+
 
   const today = new Date();
 
+
   const date =
-    today.toLocaleDateString("da-DK", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric"
-    });
+    today.toLocaleDateString(
+      "da-DK",
+      {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      }
+    );
 
-  const entry = {
+
+  entries.unshift({
+
     date: date,
-    timestamp: today.toISOString(),
-    negative: negative,
-    positive: positive,
-    sorry: sorry,
-    grateful: grateful
-  };
 
-  entries.unshift(entry);
+    timestamp:
+      today.toISOString(),
+
+    negative: negative,
+
+    positive: positive,
+
+    sorry: sorry,
+
+    grateful: grateful
+
+  });
+
 
   localStorage.setItem(
     STORAGE_KEY,
     JSON.stringify(entries)
   );
 
+
   document.getElementById("negative").value = "";
+
   document.getElementById("positive").value = "";
+
   document.getElementById("sorry").value = "";
+
   document.getElementById("grateful").value = "";
+
 
   document.getElementById("message").textContent =
     "✓ Din selvransagelse er gemt.";
 
+
   renderHistory();
 }
 
 
-/* -----------------------------
-   VIS HISTORIK
------------------------------ */
+/* =========================
+   HISTORIK
+========================= */
 
 function renderHistory() {
 
-  const history = document.getElementById("history");
+  const history =
+    document.getElementById("history");
+
 
   const entries =
-    JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "[]"
+    );
+
 
   history.innerHTML = "";
 
+
   if (entries.length === 0) {
+
     history.innerHTML =
       '<div class="history-entry">Ingen tidligere dage endnu.</div>';
+
     return;
   }
 
-  entries.forEach((entry, index) => {
 
-    const div = document.createElement("div");
+  entries.forEach(
+    (entry, index) => {
 
-    div.className = "history-entry";
+      const div =
+        document.createElement("div");
 
-    div.innerHTML = `
-      <div class="history-date">
-        ${escapeHtml(entry.date)}
-      </div>
 
-      <div class="history-question">
-        Negative tanker/følelser
-      </div>
+      div.className =
+        "history-entry";
 
-      <div class="history-answer">
-        ${escapeHtml(entry.negative)}
-      </div>
 
-      <div class="history-question">
-        Positive tanker/følelser
-      </div>
+      div.innerHTML = `
 
-      <div class="history-answer">
-        ${escapeHtml(entry.positive)}
-      </div>
+        <div class="history-date">
+          ${escapeHtml(entry.date)}
+        </div>
 
-      <div class="history-question">
-        Undskyld
-      </div>
+        <div class="history-question">
+          Negative tanker/følelser
+        </div>
 
-      <div class="history-answer">
-        ${escapeHtml(entry.sorry)}
-      </div>
+        <div class="history-answer">
+          ${escapeHtml(entry.negative)}
+        </div>
 
-      <div class="history-question">
-        Taknemmelighed
-      </div>
+        <div class="history-question">
+          Positive tanker/følelser
+        </div>
 
-      <div class="history-answer">
-        ${escapeHtml(entry.grateful)}
-      </div>
+        <div class="history-answer">
+          ${escapeHtml(entry.positive)}
+        </div>
 
-      <button
-        class="delete-button"
-        onclick="deleteEntry(${index})">
-        Slet denne dag
-      </button>
-    `;
+        <div class="history-question">
+          Undskyld
+        </div>
 
-    history.appendChild(div);
-  });
+        <div class="history-answer">
+          ${escapeHtml(entry.sorry)}
+        </div>
+
+        <div class="history-question">
+          Taknemmelighed
+        </div>
+
+        <div class="history-answer">
+          ${escapeHtml(entry.grateful)}
+        </div>
+
+        <button
+          class="delete-button"
+          onclick="deleteEntry(${index})">
+
+          Slet denne dag
+
+        </button>
+
+      `;
+
+
+      history.appendChild(div);
+
+    }
+  );
 }
 
 
-/* -----------------------------
-   SLET DAG
------------------------------ */
+/* =========================
+   SLET
+========================= */
 
 function deleteEntry(index) {
 
   const entries =
-    JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "[]"
+    );
+
 
   entries.splice(index, 1);
+
 
   localStorage.setItem(
     STORAGE_KEY,
     JSON.stringify(entries)
   );
 
+
   renderHistory();
 }
 
 
-/* -----------------------------
+/* =========================
    SIKKER TEKST
------------------------------ */
+========================= */
 
 function escapeHtml(text) {
 
-  const div = document.createElement("div");
+  const div =
+    document.createElement("div");
 
-  div.textContent = text;
+  div.textContent =
+    text;
 
   return div.innerHTML;
 }
 
 
-/* -----------------------------
-   AKTIVER NOTIFIKATIONER
------------------------------ */
+/* =========================
+   NOTIFIKATIONER
+========================= */
 
 async function enableNotifications() {
 
   const status =
-    document.getElementById("notificationStatus");
+    document.getElementById(
+      "notificationStatus"
+    );
 
-  status.textContent = "Aktiverer...";
+
+  status.className =
+    "notification-status";
+
+
+  status.textContent =
+    "Forbinder til notifikationer...";
+
 
   try {
 
+    /* Tjek Notification */
+
     if (!("Notification" in window)) {
+
       throw new Error(
-        "Denne enhed understøtter ikke notifikationer."
+        "Notification API understøttes ikke på denne enhed."
       );
     }
 
+
+    /* Tjek Service Worker */
+
     if (!("serviceWorker" in navigator)) {
+
       throw new Error(
         "Service Worker understøttes ikke."
       );
     }
 
+
+    /* Spørg om tilladelse */
+
     const permission =
       await Notification.requestPermission();
 
+
     if (permission !== "granted") {
 
-      status.textContent =
-        "Notifikationer blev ikke tilladt.";
-
-      return;
+      throw new Error(
+        "Notifikationstilladelsen er ikke givet. Tillad notifikationer i iPhone-indstillingerne."
+      );
     }
 
 
@@ -476,32 +592,42 @@ async function enableNotifications() {
 
     const registration =
       await navigator.serviceWorker.register(
-        "/Daglig-selvransagelse/firebase-messaging-sw.js"
+        "/Daglig-selvransagelse/firebase-messaging-sw.js",
+        {
+          scope:
+            "/Daglig-selvransagelse/"
+        }
       );
 
 
-    /* Vent på at service workeren er klar */
+    /* Vent */
 
     await navigator.serviceWorker.ready;
 
 
-    /* Hent Firebase registreringskode */
+    /* Hent Firebase token */
 
     const token =
       await messaging.getToken({
-        vapidKey: VAPID_KEY,
-        serviceWorkerRegistration: registration
+
+        vapidKey:
+          VAPID_KEY,
+
+        serviceWorkerRegistration:
+          registration
+
       });
 
 
     if (!token) {
+
       throw new Error(
-        "Der blev ikke oprettet en registreringskode."
+        "Firebase returnerede ingen registreringskode."
       );
     }
 
 
-    /* Gem token lokalt */
+    /* Gem token */
 
     localStorage.setItem(
       "daglig_selvransagelse_fcm_token",
@@ -509,42 +635,66 @@ async function enableNotifications() {
     );
 
 
+    status.className =
+      "notification-status success";
+
+
     status.textContent =
       "✓ Notifikationer er aktiveret.";
 
+
     console.log(
-      "Firebase registreringskode:",
+      "Firebase token:",
       token
     );
 
-  } catch (error) {
+  }
 
-    console.error(error);
+
+  catch (error) {
+
+    console.error(
+      "NOTIFIKATIONSFEJL:",
+      error
+    );
+
+
+    status.className =
+      "notification-status error";
+
 
     status.textContent =
-      "Der opstod en fejl. Prøv igen.";
+      "FEJL: " +
+      (
+        error.message ||
+        error.name ||
+        String(error)
+      );
 
   }
+
 }
 
 
-/* -----------------------------
-   MODTAG BESKEDER NÅR APPEN ER ÅBEN
------------------------------ */
+/* =========================
+   BESKEDER NÅR APPEN ER ÅBEN
+========================= */
 
-messaging.onMessage((payload) => {
+messaging.onMessage(
+  (payload) => {
 
-  console.log(
-    "Notifikation modtaget:",
-    payload
-  );
+    console.log(
+      "Notifikation modtaget:",
+      payload
+    );
 
-});
+  }
+);
 
 
-/* -----------------------------
+/* =========================
    START
------------------------------ */
+========================= */
 
 renderHistory();
 
