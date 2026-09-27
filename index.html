@@ -109,12 +109,12 @@
       word-break: break-word;
     }
 
-    .error {
-      color: #9b3d35;
-    }
-
     .success {
       color: #55705a;
+    }
+
+    .error {
+      color: #9b3d35;
     }
 
     .history-title {
@@ -259,18 +259,26 @@
 </div>
 
 
-<!-- Firebase -->
+<script type="module">
 
-<script src="https://www.gstatic.com/firebasejs/11.10.1/firebase-app-compat.js"></script>
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/11.10.1/firebase-app.js";
 
-<script src="https://www.gstatic.com/firebasejs/11.10.1/firebase-messaging-compat.js"></script>
+import {
+  getMessaging,
+  register,
+  onRegistered
+} from "https://www.gstatic.com/firebasejs/11.10.1/firebase-messaging.js";
 
 
-<script>
+/* =========================
+   FIREBASE
+========================= */
 
 const firebaseConfig = {
 
-  apiKey: "AIzaSyAT3yL3DLsbP2X09LlVVdtRYblBEu2PQB4",
+  apiKey:
+    "AIzaSyAT3yL3DLsbP2X09LlVVdtRYblBEu2PQB4",
 
   authDomain:
     "daglig-selvransagelse.firebaseapp.com",
@@ -296,19 +304,26 @@ const VAPID_KEY =
 "BFegX-4u2IMOaLx_6e9WkODDZR_ishwuvzdUYmt3w1_Q-YMndVAD9HvxXszXR-Ny2oAhpnPOtGPdxzTcdGj1mEc";
 
 
-firebase.initializeApp(firebaseConfig);
+const app =
+  initializeApp(firebaseConfig);
 
-const messaging = firebase.messaging();
+const messaging =
+  getMessaging(app);
+
+
+/* =========================
+   LOKAL LAGRING
+========================= */
 
 const STORAGE_KEY =
   "daglig_selvransagelse_v2";
 
 
 /* =========================
-   GEM SELVRANSAGELSE
+   GEM DAG
 ========================= */
 
-function saveEntry() {
+window.saveEntry = function() {
 
   const negative =
     document.getElementById("negative").value.trim();
@@ -341,7 +356,8 @@ function saveEntry() {
     );
 
 
-  const today = new Date();
+  const today =
+    new Date();
 
 
   const date =
@@ -393,7 +409,7 @@ function saveEntry() {
 
 
   renderHistory();
-}
+};
 
 
 /* =========================
@@ -492,10 +508,10 @@ function renderHistory() {
 
 
 /* =========================
-   SLET
+   SLET DAG
 ========================= */
 
-function deleteEntry(index) {
+window.deleteEntry = function(index) {
 
   const entries =
     JSON.parse(
@@ -513,7 +529,7 @@ function deleteEntry(index) {
 
 
   renderHistory();
-}
+};
 
 
 /* =========================
@@ -533,10 +549,48 @@ function escapeHtml(text) {
 
 
 /* =========================
-   NOTIFIKATIONER
+   FIREBASE REGISTRERING
 ========================= */
 
-async function enableNotifications() {
+onRegistered(
+  messaging,
+  (installationId) => {
+
+    console.log(
+      "Firebase Installation ID:",
+      installationId
+    );
+
+
+    localStorage.setItem(
+      "daglig_selvransagelse_fid",
+      installationId
+    );
+
+
+    const status =
+      document.getElementById(
+        "notificationStatus"
+      );
+
+
+    status.className =
+      "notification-status success";
+
+
+    status.textContent =
+      "✓ Din iPhone er registreret til påmindelser.";
+
+  }
+);
+
+
+/* =========================
+   AKTIVER NOTIFIKATIONER
+========================= */
+
+window.enableNotifications =
+async function() {
 
   const status =
     document.getElementById(
@@ -549,32 +603,28 @@ async function enableNotifications() {
 
 
   status.textContent =
-    "Forbinder til notifikationer...";
+    "Aktiverer påmindelser...";
 
 
   try {
 
-    /* Tjek Notification */
-
     if (!("Notification" in window)) {
 
       throw new Error(
-        "Notification API understøttes ikke på denne enhed."
+        "Denne iPhone understøtter ikke webnotifikationer."
       );
+
     }
 
-
-    /* Tjek Service Worker */
 
     if (!("serviceWorker" in navigator)) {
 
       throw new Error(
         "Service Worker understøttes ikke."
       );
+
     }
 
-
-    /* Spørg om tilladelse */
 
     const permission =
       await Notification.requestPermission();
@@ -583,55 +633,21 @@ async function enableNotifications() {
     if (permission !== "granted") {
 
       throw new Error(
-        "Notifikationstilladelsen er ikke givet. Tillad notifikationer i iPhone-indstillingerne."
+        "Notifikationer er ikke tilladt."
       );
+
     }
 
 
-    /* Registrer Firebase service worker */
+    /*
+      Registrér FCM med den nye metode.
+    */
 
-    const registration =
-      await navigator.serviceWorker.register(
-        "/Daglig-selvransagelse/firebase-messaging-sw.js",
-        {
-          scope:
-            "/Daglig-selvransagelse/"
-        }
-      );
-
-
-    /* Vent */
-
-    await navigator.serviceWorker.ready;
-
-
-    /* Hent Firebase token */
-
-    const token =
-      await messaging.getToken({
-
-        vapidKey:
-          VAPID_KEY,
-
-        serviceWorkerRegistration:
-          registration
-
-      });
-
-
-    if (!token) {
-
-      throw new Error(
-        "Firebase returnerede ingen registreringskode."
-      );
-    }
-
-
-    /* Gem token */
-
-    localStorage.setItem(
-      "daglig_selvransagelse_fcm_token",
-      token
+    await register(
+      messaging,
+      {
+        vapidKey: VAPID_KEY
+      }
     );
 
 
@@ -640,21 +656,14 @@ async function enableNotifications() {
 
 
     status.textContent =
-      "✓ Notifikationer er aktiveret.";
-
-
-    console.log(
-      "Firebase token:",
-      token
-    );
+      "✓ Påmindelser er aktiveret.";
 
   }
-
 
   catch (error) {
 
     console.error(
-      "NOTIFIKATIONSFEJL:",
+      "Firebase fejl:",
       error
     );
 
@@ -673,23 +682,7 @@ async function enableNotifications() {
 
   }
 
-}
-
-
-/* =========================
-   BESKEDER NÅR APPEN ER ÅBEN
-========================= */
-
-messaging.onMessage(
-  (payload) => {
-
-    console.log(
-      "Notifikation modtaget:",
-      payload
-    );
-
-  }
-);
+};
 
 
 /* =========================
