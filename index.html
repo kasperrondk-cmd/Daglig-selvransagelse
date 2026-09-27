@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daglig selvransagelse TEST</title>
+<title>Daglig selvransagelse</title>
 
 <style>
 body {
@@ -53,23 +53,41 @@ button {
 
 <h1>Daglig selvransagelse</h1>
 
-<p><strong>TEST 1</strong></p>
-
-<button onclick="testButton()">
-🔔 TEST KNAPPEN
+<button onclick="testNotification()">
+🔔 TEST NOTIFIKATION
 </button>
 
 <div id="status">
-Tryk på knappen ovenfor.
+Tryk på knappen.
 </div>
 
 </div>
 
 <script>
 
-function testButton() {
-  document.getElementById("status").innerText =
-    "✅ KNAPPEN VIRKER!";
+async function testNotification() {
+
+  const status = document.getElementById("status");
+
+  try {
+
+    if (!("Notification" in window)) {
+      status.innerText = "❌ Denne app understøtter ikke notifikationer.";
+      return;
+    }
+
+    const permission = await Notification.requestPermission();
+
+    status.innerText =
+      "Resultat: " + permission;
+
+  } catch (error) {
+
+    status.innerText =
+      "❌ FEJL: " + error.message;
+
+  }
+
 }
 
 </script>
