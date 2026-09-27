@@ -33,7 +33,6 @@ body {
 
 h1 {
   text-align: center;
-  margin-top: 5px;
 }
 
 h2 {
@@ -71,10 +70,23 @@ button {
   margin-top: 15px;
 }
 
+button.push {
+  background: #6b5b4b;
+}
+
 button.delete {
   background: #eee;
   color: #333;
   font-size: 14px;
+}
+
+.status {
+  white-space: pre-line;
+  text-align: center;
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f1f1f1;
 }
 
 .history-entry {
@@ -89,12 +101,6 @@ button.delete {
 
 .answer {
   margin-bottom: 12px;
-}
-
-.status {
-  text-align: center;
-  margin-top: 15px;
-  font-weight: bold;
 }
 </style>
 </head>
@@ -135,7 +141,12 @@ Tag et øjeblik og vær ærlig over for dig selv.
 💾 Gem dagens selvransagelse
 </button>
 
-<div id="status" class="status"></div>
+<button class="push" onclick="enablePush()">
+🔔 Aktivér Web Push
+</button>
+
+<div id="status" class="status">
+</div>
 
 </div>
 
@@ -196,7 +207,6 @@ function saveEntry() {
 
   const entries = getEntries();
 
-
   entries.unshift(entry);
 
 
@@ -232,10 +242,12 @@ function deleteEntry(index) {
 
   entries.splice(index, 1);
 
+
   localStorage.setItem(
     STORAGE_KEY,
     JSON.stringify(entries)
   );
+
 
   showHistory();
 
@@ -323,28 +335,111 @@ function escapeHtml(text) {
 }
 
 
-showHistory();
-if ("serviceWorker" in navigator) {
+/* WEB PUSH */
 
-  navigator.serviceWorker.register("./sw.js")
-    .then(function(registration) {
+async function enablePush() {
 
-      console.log(
-        "Service Worker registreret:",
-        registration.scope
+  const status =
+    document.getElementById("status");
+
+  status.innerText =
+    "⏳ Kontrollerer Web Push...";
+
+
+  try {
+
+    if (!("serviceWorker" in navigator)) {
+
+      throw new Error(
+        "Service Worker understøttes ikke."
       );
 
-    })
-    .catch(function(error) {
+    }
 
-      console.error(
-        "Service Worker fejl:",
-        error
+
+    if (!("PushManager" in window)) {
+
+      throw new Error(
+        "Web Push understøttes ikke."
       );
 
-    });
+    }
+
+
+    const permission =
+      await Notification.requestPermission();
+
+
+    if (permission !== "granted") {
+
+      throw new Error(
+        "Notifikationstilladelse blev ikke givet."
+      );
+
+    }
+
+
+    status.innerText =
+      "⏳ Registrerer Web Push...";
+
+
+    const registration =
+      await navigator.serviceWorker.register(
+        "./sw.js"
+      );
+
+
+    await navigator.serviceWorker.ready;
+
+
+    let subscription =
+      await registration.pushManager.getSubscription();
+
+
+    if (!subscription) {
+
+      subscription =
+        await registration.pushManager.subscribe({
+
+          userVisibleOnly: true
+
+        });
+
+    }
+
+
+    localStorage.setItem(
+      "web_push_subscription",
+      JSON.stringify(subscription)
+    );
+
+
+    status.innerText =
+      "✅ Web Push virker!\n\n" +
+      "Din iPhone er registreret til påmindelser.";
+
+
+    console.log(
+      "Web Push subscription:",
+      JSON.stringify(subscription)
+    );
+
+
+  } catch (error) {
+
+    status.innerText =
+      "❌ FEJL:\n" +
+      error.name +
+      " — " +
+      error.message;
+
+  }
 
 }
+
+
+showHistory();
+
 </script>
 
 </body>
